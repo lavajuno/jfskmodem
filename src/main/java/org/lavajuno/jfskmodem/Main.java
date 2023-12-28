@@ -33,13 +33,13 @@ public class Main {
             return;
         }
         byte[] a = new byte[5000];
+        String pad = "0".repeat(16);
         for(int i = 0; i < 2500; i += 2) {
-            int amp = (int) Math.round(Math.floor(Math.sin(i) * 32767));
-            String amp_str = Integer.toBinaryString(amp);
-            a[i * 2] = Byte.parseByte(amp_str.substring(0, 8));
-            a[i * 2 + 1] = Byte.parseByte(amp_str.substring(8, 16));
+            int amp = (int) Math.round(Math.floor(Math.sin(i) * 250));
+            a[i * 2] = (byte) (amp % 255);
+            a[i * 2 + 1] = (byte) (amp % 255);
         }
-        line.write()
+        line.write(a, 0, 5000);
 
 
 
