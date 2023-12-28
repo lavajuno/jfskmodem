@@ -1,47 +1,36 @@
 package org.lavajuno.jfskmodem;
 
+import org.lavajuno.jfskmodem.io.SoundInput;
+
 import javax.sound.sampled.*;
+import java.util.Vector;
 
 public class Main {
     public static void main(String[] args) {
-        Mixer.Info[] minf = AudioSystem.getMixerInfo();
-
-        for(Mixer.Info i : minf) {
-            System.out.println(i.getName());
-            System.out.println(i.getDescription());
-            System.out.println(i.getVendor());
-            System.out.println("----------");
-        }
-        System.out.println("Hello world!");
-
-        DataLine.Info info = new DataLine.Info(
-                SourceDataLine.class,
-                new AudioFormat(48000, 16, 1, true, true)
-        );
-
-        if(!AudioSystem.isLineSupported(info)) {
-            System.err.println("Audio format not supported, quitting now.");
-            return;
-        }
-        SourceDataLine line;
+        SoundInput s;
         try {
-            line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(new AudioFormat(48000, 16, 1, true, true));
-            line.start();
+            s = new SoundInput();
+            Vector<Short> a = new Vector<>();
+            s.start();
+            for(int j = 0; j < 50; j++) {
+                Vector<Short> b = s.listen();
+                a.addAll(b);
+            }
+            s.close();
+
+            int wrap = 0;
+            for(Short i : a) {
+                System.out.print(i);
+                System.out.print(" ");
+                if(wrap > 50) {
+                    wrap = 0;
+                    System.out.println();
+                }
+                wrap++;
+            }
         } catch(LineUnavailableException e) {
-            System.err.println("Line unavailable, quitting now.");
-            return;
+            System.err.println("Failed to initialize line.");
+            System.exit(0);
         }
-        byte[] a = new byte[5000];
-        String pad = "0".repeat(16);
-        for(int i = 0; i < 2500; i += 2) {
-            int amp = (int) Math.round(Math.floor(Math.sin(i) * 250));
-            a[i * 2] = (byte) (amp % 255);
-            a[i * 2 + 1] = (byte) (amp % 255);
-        }
-        line.write(a, 0, 5000);
-
-
-
     }
 }
