@@ -6,6 +6,7 @@ import java.util.Vector;
 /**
  * SoundOutput represents a single audio output.
  */
+@SuppressWarnings("unused")
 public class SoundOutput {
     private final SourceDataLine LINE;
 

@@ -7,6 +7,7 @@ import java.util.Vector;
 /**
  * SoundInput represents a single audio input device.
  */
+@SuppressWarnings("unused")
 public class SoundInput {
     private static final int INPUT_BLOCK_SIZE = 4096;
     private final TargetDataLine LINE;
