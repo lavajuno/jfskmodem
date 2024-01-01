@@ -2,6 +2,7 @@ package org.lavajuno.jfskmodem;
 
 import org.lavajuno.jfskmodem.ecc.Hamming;
 import org.lavajuno.jfskmodem.io.SoundInput;
+import org.lavajuno.jfskmodem.modem.Transmitter;
 
 import javax.sound.sampled.*;
 import java.util.Arrays;
@@ -36,7 +37,13 @@ public class Main {
             System.exit(0);
         }
         */
-        System.out.println(Arrays.toString(Hamming.encode(new byte[]{1, 0, 1, 1})));
-        System.out.println(Arrays.toString(Hamming.decode(new byte[]{0, 1, 1, 0, 1, 1, 1})));
+        try {
+            Transmitter t = new Transmitter(300);
+            byte[] b = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB".getBytes();
+            t.transmit(b);
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

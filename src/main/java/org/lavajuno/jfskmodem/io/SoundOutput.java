@@ -28,6 +28,7 @@ public class SoundOutput {
      */
     public void play(Vector<Short> frames) {
         byte[] buffer = framesToBytes(frames);
+        LINE.flush();
         LINE.write(buffer, 0, buffer.length);
         LINE.drain();
     }
