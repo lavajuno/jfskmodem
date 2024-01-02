@@ -70,4 +70,15 @@ public class Waveforms {
         }
         return (int) total / a.size();
     }
+
+    /**
+     * Gets the mean amplitude of a waveform.
+     * @param frames Waveform as frames
+     * @return Mean amplitude of the waveform
+     */
+    public static int getAmplitude(Vector<Short> frames) {
+        long total = 0;
+        for (Short frame : frames) { total += Math.abs(frame); }
+        return (int) total / frames.size();
+    }
 }
