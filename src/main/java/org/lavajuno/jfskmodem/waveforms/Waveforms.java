@@ -49,8 +49,25 @@ public class Waveforms {
      * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
      */
     public static Vector<Short> getTrainingCycle(int baud_rate) throws IllegalArgumentException {
-        Vector<Short> res = new Vector<>(getSpaceTone(baud_rate));
-        res.addAll(getMarkTone(baud_rate));
+        Vector<Short> res = new Vector<>(getMarkTone(baud_rate));
+        res.addAll(getSpaceTone(baud_rate));
         return res;
+    }
+
+    /**
+     * Gets the mean of the differences between two waveforms at each frame.
+     * @param a Waveform A
+     * @param b Waveform B
+     * @return Mean of the differences between A and B at each frame
+     */
+    public static int getDiff(Vector<Short> a, Vector<Short> b) {
+        if(a.size() != b.size()) {
+            throw new IllegalArgumentException("Clips must be of same length.");
+        }
+        long total = 0;
+        for(int i = 0; i < a.size(); i++) {
+            total += Math.abs(a.get(i) - b.get(i));
+        }
+        return (int) total / a.size();
     }
 }

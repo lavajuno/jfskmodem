@@ -1,14 +1,12 @@
-package org.lavajuno.jfskmodem;
+package org.lavajuno.jfskmodem.main;
 
-import org.lavajuno.jfskmodem.ecc.Hamming;
-import org.lavajuno.jfskmodem.io.SoundInput;
 import org.lavajuno.jfskmodem.modem.Transmitter;
 
 import javax.sound.sampled.*;
-import java.util.Arrays;
-import java.util.Vector;
 
-public class Main {
+public class JFSKModemApplication {
+    public static final double TRAINING_TIME = 0.5;
+
     public static void main(String[] args) {
         /*
         SoundInput s;
@@ -38,8 +36,8 @@ public class Main {
         }
         */
         try {
-            Transmitter t = new Transmitter(300);
-            byte[] b = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB".getBytes();
+            Transmitter t = new Transmitter(6000);
+            byte[] b = "BBBBBBBBBBBBBBBBBBBBBB:DSKJFH:SGHGBJLKWEJBFUIWBGJdfhsdfhglkjsbglkebroiugwbgpwjthpkwbejigfuebhyrubtglwkuebtoi4btueBBBBBBBBBBBBBBBBBBBBBBBB".getBytes();
             t.transmit(b);
         } catch (LineUnavailableException e) {
             throw new RuntimeException(e);
