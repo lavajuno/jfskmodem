@@ -1,5 +1,6 @@
 package org.lavajuno.jfskmodem.waveforms;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -60,7 +61,7 @@ public class Waveforms {
      * @param b Waveform B
      * @return Mean of the differences between A and B at each frame
      */
-    public static int getDiff(Vector<Short> a, Vector<Short> b) {
+    public static int getDiff(List<Short> a, List<Short> b) {
         if(a.size() != b.size()) {
             throw new IllegalArgumentException("Clips must be of same length.");
         }
