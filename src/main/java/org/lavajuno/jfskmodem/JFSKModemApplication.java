@@ -1,8 +1,10 @@
-package org.lavajuno.jfskmodem.main;
+package org.lavajuno.jfskmodem;
 
+import org.lavajuno.jfskmodem.modem.Receiver;
 import org.lavajuno.jfskmodem.modem.Transmitter;
 
 import javax.sound.sampled.*;
+import java.nio.charset.StandardCharsets;
 
 public class JFSKModemApplication {
     public static final double TRAINING_TIME = 0.5;
@@ -35,11 +37,22 @@ public class JFSKModemApplication {
             System.exit(0);
         }
         */
+
+
         try {
-            Transmitter t = new Transmitter(6000);
-            byte[] b = "BBBBBBBBBBBBBBBBBBBBBB:DSKJFH:SGHGBJLKWEJBFUIWBGJdfhsdfhglkjsbglkebroiugwbgpwjthpkwbejigfuebhyrubtglwkuebtoi4btueBBBBBBBBBBBBBBBBBBBBBBBB".getBytes();
+            Transmitter t = new Transmitter(1200);
+            byte[] b = "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd".getBytes(StandardCharsets.UTF_8);
             t.transmit(b);
         } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Receiver r = new Receiver(1200);
+            byte[] b = r.receive(100);
+            System.out.println(new String(b, StandardCharsets.UTF_8));
+
+        } catch(LineUnavailableException e) {
             throw new RuntimeException(e);
         }
 

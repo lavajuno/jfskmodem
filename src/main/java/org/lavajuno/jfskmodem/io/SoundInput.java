@@ -2,10 +2,11 @@ package org.lavajuno.jfskmodem.io;
 
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- * SoundInput represents a single audio input device.
+ * SoundInput provides functionality for reading frames from the default audio input device.
  */
 @SuppressWarnings("unused")
 public class SoundInput {
@@ -25,9 +26,9 @@ public class SoundInput {
 
     /**
      * Blocks and listens on the audio input device.
-     * @return Vector of frames from the input buffer
+     * @return List of frames from the input buffer
      */
-    public Vector<Short> listen() {
+    public List<Short> listen() {
         byte[] buffer = new byte[INPUT_BLOCK_SIZE];
         LINE.read(buffer, 0, buffer.length);
         return bytesToFrames(buffer);
@@ -64,14 +65,14 @@ public class SoundInput {
 
     /**
      * @param buffer Array of frames as bytes to convert
-     * @return Vector of frames as signed shorts
+     * @return List of frames as signed shorts
      */
-    private static Vector<Short> bytesToFrames(byte[] buffer) {
-        Vector<Short> out_frames = new Vector<>(buffer.length / 2);
+    private static List<Short> bytesToFrames(byte[] buffer) {
+        ArrayList<Short> out_frames = new ArrayList<>(buffer.length / 2);
         byte[] frame = new byte[2];
         for(int i = 0; i < buffer.length - 1; i += 2) {
-            frame[0] = buffer[i + 1];
-            frame[1] = buffer[i];
+            frame[0] = buffer[i];
+            frame[1] = buffer[i + 1];
             out_frames.add(ByteBuffer.wrap(frame).getShort());
         }
         return out_frames;

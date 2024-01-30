@@ -1,10 +1,10 @@
 package org.lavajuno.jfskmodem.io;
 
 import javax.sound.sampled.*;
-import java.util.Vector;
+import java.util.List;
 
 /**
- * SoundOutput represents a single audio output.
+ * SoundOutput provides functionality for writing frames to the default audio output device.
  */
 @SuppressWarnings("unused")
 public class SoundOutput {
@@ -24,9 +24,9 @@ public class SoundOutput {
 
     /**
      * Blocks and plays on the audio output device.
-     * @param frames Vector of frames to play
+     * @param frames List of frames to play
      */
-    public void play(Vector<Short> frames) {
+    public void play(List<Short> frames) {
         byte[] buffer = framesToBytes(frames);
         LINE.flush();
         LINE.write(buffer, 0, buffer.length);
@@ -47,10 +47,10 @@ public class SoundOutput {
     }
 
     /**
-     * @param frames Vector of frames as signed shorts to convert
+     * @param frames List of frames as signed shorts to convert
      * @return Array of frames as bytes
      */
-    private static byte[] framesToBytes(Vector<Short> frames) {
+    private static byte[] framesToBytes(List<Short> frames) {
         byte[] buffer = new byte[frames.size() * 2];
         byte[] frame = new byte[2];
         for(int i = 0; i < frames.size(); i++) {

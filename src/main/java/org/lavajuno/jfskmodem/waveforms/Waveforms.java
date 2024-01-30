@@ -1,7 +1,7 @@
 package org.lavajuno.jfskmodem.waveforms;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Waveforms provides functionality for generating space+mark tones and training cycles.
@@ -10,15 +10,15 @@ public class Waveforms {
     /**
      * Generates a single space tone for the given baud rate.
      * @param baud_rate Baud rate to use for generation
-     * @return Space tone frames as a vector of shorts
+     * @return Space tone frames as a list of shorts
      * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
      */
-    public static Vector<Short> getSpaceTone(int baud_rate) throws IllegalArgumentException {
+    public static List<Short> getSpaceTone(int baud_rate) throws IllegalArgumentException {
         if(48000 % baud_rate != 0 || baud_rate % 4 != 0) {
             throw new IllegalArgumentException("Invalid baud rate.");
         }
         int bit_frames = 48000 / baud_rate;
-        Vector<Short> res = new Vector<>(bit_frames);
+        ArrayList<Short> res = new ArrayList<>(bit_frames);
         for(int i = 0; i < bit_frames / 2; i++) {
             res.add((short) 32767);
         }
@@ -31,14 +31,14 @@ public class Waveforms {
     /**
      * Generates a single mark tone for the given baud rate.
      * @param baud_rate Baud rate to use for generation
-     * @return Mark tone frames as a vector of shorts
+     * @return Mark tone frames as a list of shorts
      * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
      */
-    public static Vector<Short> getMarkTone(int baud_rate) throws IllegalArgumentException {
+    public static List<Short> getMarkTone(int baud_rate) throws IllegalArgumentException {
         if(48000 % baud_rate != 0 || baud_rate % 4 != 0) {
             throw new IllegalArgumentException("Invalid baud rate.");
         }
-        Vector<Short> res = getSpaceTone(baud_rate * 2);
+        List<Short> res = getSpaceTone(baud_rate * 2);
         res.addAll(getSpaceTone(baud_rate * 2));
         return res;
     }
@@ -46,11 +46,11 @@ public class Waveforms {
     /**
      * Generates a single training cycle for the given baud rate.
      * @param baud_rate Baud rate to use for generation
-     * @return Training cycle frames as a vector of shorts
+     * @return Training cycle frames as a list of shorts
      * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
      */
-    public static Vector<Short> getTrainingCycle(int baud_rate) throws IllegalArgumentException {
-        Vector<Short> res = new Vector<>(getMarkTone(baud_rate));
+    public static List<Short> getTrainingCycle(int baud_rate) throws IllegalArgumentException {
+        ArrayList<Short> res = new ArrayList<>(getMarkTone(baud_rate));
         res.addAll(getSpaceTone(baud_rate));
         return res;
     }
@@ -77,9 +77,9 @@ public class Waveforms {
      * @param frames Waveform as frames
      * @return Mean amplitude of the waveform
      */
-    public static int getAmplitude(Vector<Short> frames) {
+    public static int getAmplitude(List<Short> frames) {
         long total = 0;
         for (Short frame : frames) { total += Math.abs(frame); }
-        return (int) total / frames.size();
+        return (int) (total / frames.size());
     }
 }
