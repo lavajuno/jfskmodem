@@ -50,6 +50,7 @@ public class Receiver {
     private List<Short> record(int timeout_frames) {
         ArrayList<Short> recorded_signal = new ArrayList<>();
         sound_in.start();
+        sound_in.listen();
         /* Wait for signal */
         for(int i = 0; i < timeout_frames;) {
             List<Short> frames = sound_in.listen();
@@ -76,7 +77,7 @@ public class Receiver {
      * @return Decoded bytes
      */
     private byte[] decodeBytes(List<Byte> rec_bits) {
-        if(rec_bits.size() % 14 != 0) {
+        if(rec_bits.size() % 14 != 0 || rec_bits.isEmpty()) {
             System.err.println("(jfskmodem) Receiver: Could not decode.");
             return new byte[]{};
         }
@@ -151,7 +152,7 @@ public class Receiver {
             return -1;
         }
         ArrayList<Integer> scan_diffs = new ArrayList<>();
-        for(int i = 0; i < CLOCK_SCAN_WIDTH; i++) {
+        for(int i = 0; i < CLOCK_SCAN_WIDTH - BIT_FRAMES * 2; i++) {
             scan_diffs.add(Waveforms.getDiff(TS_CYCLE, frames.subList(i, i + BIT_FRAMES * 2)));
         }
         int min_diff = scan_diffs.get(0);
