@@ -41,7 +41,7 @@ public class JFSKModemApplication {
 
         try {
             Transmitter t = new Transmitter(1200);
-            byte[] b = "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd".getBytes(StandardCharsets.UTF_8);
+            byte[] b = "The quick brown fox jumped over the lazy dog.".getBytes(StandardCharsets.UTF_8);
             t.transmit(b);
         } catch (LineUnavailableException e) {
             throw new RuntimeException(e);
