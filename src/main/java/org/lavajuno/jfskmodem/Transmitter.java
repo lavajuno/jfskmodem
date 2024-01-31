@@ -1,8 +1,7 @@
-package org.lavajuno.jfskmodem.modem;
+package org.lavajuno.jfskmodem;
 
 import org.lavajuno.jfskmodem.ecc.Hamming;
 import org.lavajuno.jfskmodem.io.SoundOutput;
-import org.lavajuno.jfskmodem.JFSKModemApplication;
 import org.lavajuno.jfskmodem.log.Log;
 import org.lavajuno.jfskmodem.waveforms.Waveforms;
 
@@ -25,16 +24,21 @@ public class Transmitter {
 
     /**
      * Constructs a Transmitter with the given baud rate.
-     * @param baud_rate Baud rate for the Transmitter
+     * @param baud_rate Baud rate for this Transmitter
+     * @param log_level Log level for this Transmitter
      * @throws LineUnavailableException If the audio output line could not be created
      */
-    public Transmitter(int baud_rate) throws LineUnavailableException {
-        N_TS_CYCLES = (int) (baud_rate * JFSKModemApplication.TRAINING_TIME / 2);
+    public Transmitter(int baud_rate, Log.Level log_level) throws LineUnavailableException {
+        N_TS_CYCLES = (int) (baud_rate * JfskModemDemo.TRAINING_TIME / 2);
         TONE_SPACE = Waveforms.getSpaceTone(baud_rate);
         TONE_MARK = Waveforms.getMarkTone(baud_rate);
         TS_CYCLE = Waveforms.getTrainingCycle(baud_rate);
         sound_out = new SoundOutput();
-        log = new Log("Transmitter", Log.Level.DEBUG);
+        log = new Log("Transmitter", log_level);
+    }
+
+    public Transmitter(int baud_rate) throws LineUnavailableException {
+        this(baud_rate, Log.Level.WARN);
     }
 
     /**

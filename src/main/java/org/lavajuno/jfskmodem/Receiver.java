@@ -1,4 +1,4 @@
-package org.lavajuno.jfskmodem.modem;
+package org.lavajuno.jfskmodem;
 
 import org.lavajuno.jfskmodem.ecc.Hamming;
 import org.lavajuno.jfskmodem.io.SoundInput;
@@ -27,7 +27,7 @@ public class Receiver {
     private final SoundInput sound_in;
     private final Log log;
 
-    public Receiver(int baud_rate, int signal_start_threshold, int signal_end_threshold)
+    public Receiver(int baud_rate, int signal_start_threshold, int signal_end_threshold, Log.Level log_level)
             throws LineUnavailableException {
         BIT_FRAMES = 48000 / baud_rate;
         SIGNAL_START_THRESHOLD = signal_start_threshold;
@@ -36,11 +36,20 @@ public class Receiver {
         TONE_MARK = Waveforms.getMarkTone(baud_rate);
         TS_CYCLE = Waveforms.getTrainingCycle(baud_rate);
         sound_in = new SoundInput();
-        log = new Log("Receiver", Log.Level.DEBUG);
+        log = new Log("Receiver", log_level);
+    }
+
+    public Receiver(int baud_rate, int signal_start_threshold, int signal_end_threshold)
+            throws LineUnavailableException {
+        this(baud_rate, signal_start_threshold, signal_end_threshold, Log.Level.WARN);
+    }
+
+    public Receiver(int baud_rate, Log.Level log_level) throws LineUnavailableException {
+        this(baud_rate, 18000, 14000, log_level);
     }
 
     public Receiver(int baud_rate) throws LineUnavailableException {
-        this(baud_rate, 18000, 14000);
+        this(baud_rate, Log.Level.WARN);
     }
 
     public byte[] receive(int timeout) {

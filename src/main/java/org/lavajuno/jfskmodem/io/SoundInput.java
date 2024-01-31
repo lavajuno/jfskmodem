@@ -19,16 +19,25 @@ public class SoundInput {
 
     /**
      * Constructs a SoundInput that listens on the default input device.
+     * @param log_level Log level for this SoundInput
      * @throws LineUnavailableException If the input line could not be created
      */
-    public SoundInput() throws LineUnavailableException {
-        log = new Log("SoundInput", Log.Level.DEBUG);
+    public SoundInput(Log.Level log_level) throws LineUnavailableException {
+        log = new Log("SoundInput", log_level);
         log.debug("Opening line to default audio input device...");
         AudioFormat format = new AudioFormat(48000, 16, 1, true, true);
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
         line = (TargetDataLine) AudioSystem.getLine(info);
         line.open(format);
         log.debug("Done setting up audio input.");
+    }
+
+    /**
+     * Constructs a SoundInput that listens on the default input device.
+     * @throws LineUnavailableException If the input line could not be created
+     */
+    public SoundInput() throws LineUnavailableException {
+        this(Log.Level.WARN);
     }
 
     /**

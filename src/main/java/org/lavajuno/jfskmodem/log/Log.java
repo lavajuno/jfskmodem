@@ -52,7 +52,7 @@ public class Log {
             case FATAL -> sb.append(LOG_FATAL);
         }
         sb.append(class_name);
-        sb.append(" ".repeat(Math.max(0, 24 - class_name.length())));
+        sb.append(" ".repeat(Math.max(0, 20 - class_name.length())));
         sb.append(": ");
         sb.append(message);
         System.out.println(sb);
