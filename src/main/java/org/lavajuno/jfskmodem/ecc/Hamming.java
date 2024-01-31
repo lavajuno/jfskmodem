@@ -1,7 +1,6 @@
 package org.lavajuno.jfskmodem.ecc;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 /**
  * Hamming provides functionality for encoding
@@ -23,7 +22,7 @@ public class Hamming {
     };
 
     /**
-     * Parity matrix to find errors while decoding data
+     * Parity matrix to find the position of errors while decoding data
      */
     private static final byte[][] M_PARITY = {
             {1, 0, 1, 0, 1, 0, 1},
@@ -32,6 +31,7 @@ public class Hamming {
     };
 
     /**
+     * Multiplies a matrix and vector modulo 2.
      * @param a Matrix
      * @param b Vector
      * @return Product of the matrix and vector (modulo 2)
@@ -48,16 +48,16 @@ public class Hamming {
     }
 
     /**
-     * Encodes 4 bits with Hamming(4,3)
+     * Encodes 4 data bits with Hamming(4,3)
      * @param data Data to encode
      * @return Encoded data
      */
-    public static byte[] encode(byte[] data) { return multiply(M_GENERATOR, data); }
+    private static byte[] encode(byte[] data) { return multiply(M_GENERATOR, data); }
 
     /**
-     * Encodes a byte with Hamming(4,3)
-     * @param data Data to encode
-     * @return Encoded data
+     * Encodes a byte to 14 encoded bits with Hamming(4,3)
+     * @param data Data bits to encode
+     * @return Encoded bits
      */
     public static byte[] encodeByte(byte data) {
         byte[] res = new byte[14];
@@ -70,11 +70,11 @@ public class Hamming {
     }
 
     /**
-     * Decodes 7 bits with Hamming(4,3)
-     * @param data Data to decode
-     * @return Decoded data
+     * Decodes 4 data bits from 7 received bits with Hamming(4,3)
+     * @param data Bits to decode
+     * @return Decoded data bits
      */
-    public static byte[] decode(byte[] data) {
+    private static byte[] decode(byte[] data) {
         byte[] syn = multiply(M_PARITY, data);
         int error_pos = syn[2] * 4 + syn[1] * 2 + syn[0];
         byte[] res = data.clone();
@@ -85,9 +85,9 @@ public class Hamming {
     }
 
     /**
-     * Decodes a byte with Hamming(4,3)
-     * @param data Data to decode
-     * @return Decoded data
+     * Decodes a byte from 14 encoded bits with Hamming(4,3)
+     * @param data Bits to decode
+     * @return Decoded byte
      */
     public static byte decodeByte(byte[] data) {
         byte[] res = new byte[8];
