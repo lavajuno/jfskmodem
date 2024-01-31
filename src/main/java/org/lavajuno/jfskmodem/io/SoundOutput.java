@@ -1,5 +1,7 @@
 package org.lavajuno.jfskmodem.io;
 
+import org.lavajuno.jfskmodem.log.Log;
+
 import javax.sound.sampled.*;
 import java.util.List;
 
@@ -8,18 +10,22 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class SoundOutput {
-    private final SourceDataLine LINE;
+    private final SourceDataLine line;
+    private final Log log;
 
     /**
      * Constructs a SoundOutput that listens on the default input device.
      * @throws LineUnavailableException If the output line could not be created
      */
     public SoundOutput() throws LineUnavailableException {
+        log = new Log("SoundOutput", Log.Level.DEBUG);
+        log.debug("Opening line to default audio output device...");
         AudioFormat format = new AudioFormat(48000, 16, 1, true, true);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-        LINE = (SourceDataLine) AudioSystem.getLine(info);
-        LINE.open(format);
-        LINE.start();
+        line = (SourceDataLine) AudioSystem.getLine(info);
+        line.open(format);
+        line.start();
+        log.debug("Done setting up audio output.");
     }
 
     /**
@@ -27,23 +33,25 @@ public class SoundOutput {
      * @param frames List of frames to play
      */
     public void play(List<Short> frames) {
+        log.debug("Playing " + frames.size() + " frames.");
         byte[] buffer = framesToBytes(frames);
-        LINE.flush();
-        LINE.write(buffer, 0, buffer.length);
-        LINE.drain();
+        line.flush();
+        line.write(buffer, 0, buffer.length);
+        line.drain();
     }
 
     /**
      * Flushes the output buffer.
      */
-    public void flush() { LINE.flush(); }
+    public void flush() { line.flush(); }
 
     /**
      * Stops and closes the line.
      */
     public void close() {
-        LINE.stop();
-        LINE.close();
+        log.debug("Closing audio output line.");
+        line.stop();
+        line.close();
     }
 
     /**

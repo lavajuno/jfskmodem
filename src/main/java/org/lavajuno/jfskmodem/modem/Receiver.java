@@ -2,12 +2,17 @@ package org.lavajuno.jfskmodem.modem;
 
 import org.lavajuno.jfskmodem.ecc.Hamming;
 import org.lavajuno.jfskmodem.io.SoundInput;
+import org.lavajuno.jfskmodem.log.Log;
 import org.lavajuno.jfskmodem.waveforms.Waveforms;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Receiver manages a line to the default audio input device
+ * and allows you to receive data over it.
+ */
 @SuppressWarnings("unused")
 public class Receiver {
     private static final int CLOCK_SCAN_WIDTH = 4096;
@@ -20,6 +25,7 @@ public class Receiver {
     private final List<Short> TS_CYCLE;
 
     private final SoundInput sound_in;
+    private final Log log;
 
     public Receiver(int baud_rate, int signal_start_threshold, int signal_end_threshold)
             throws LineUnavailableException {
@@ -30,6 +36,7 @@ public class Receiver {
         TONE_MARK = Waveforms.getMarkTone(baud_rate);
         TS_CYCLE = Waveforms.getTrainingCycle(baud_rate);
         sound_in = new SoundInput();
+        log = new Log("Receiver", Log.Level.DEBUG);
     }
 
     public Receiver(int baud_rate) throws LineUnavailableException {
@@ -37,6 +44,7 @@ public class Receiver {
     }
 
     public byte[] receive(int timeout) {
+        log.info("Listening...");
         List<Short> rec_frames = record(timeout * 48000);
         List<Byte> rec_bits = decodeBits(rec_frames);
         return decodeBytes(rec_bits);
@@ -55,6 +63,7 @@ public class Receiver {
         for(int i = 0; i < timeout_frames;) {
             List<Short> frames = sound_in.listen();
             if(Waveforms.getAmplitude(frames) > SIGNAL_START_THRESHOLD) {
+                log.debug("Signal start detected.");
                 recorded_signal.addAll(frames);
                 break; /* Start of signal */
             }
@@ -65,9 +74,12 @@ public class Receiver {
             List<Short> frames = sound_in.listen();
             recorded_signal.addAll(frames);
             if(Waveforms.getAmplitude(frames) < SIGNAL_END_THRESHOLD) {
+                log.debug("Signal end detected.");
                 break; /* End of signal */
             }
         }
+        sound_in.stop();
+        log.debug("Received " + recorded_signal.size() + " frames.");
         return recorded_signal;
     }
 
@@ -78,7 +90,7 @@ public class Receiver {
      */
     private byte[] decodeBytes(List<Byte> rec_bits) {
         if(rec_bits.size() % 14 != 0 || rec_bits.isEmpty()) {
-            System.err.println("(jfskmodem) Receiver: Could not decode.");
+            log.error("Could not decode (Not enough bits)");
             return new byte[]{};
         }
         int n_bytes = rec_bits.size() / 14;
@@ -93,6 +105,7 @@ public class Receiver {
             }
         }
         rec_bytes[n_bytes - 1] = Hamming.decodeByte(current_byte);
+        log.debug("Decoded " + rec_bytes.length + " bytes.");
         return rec_bytes;
     }
 
@@ -104,7 +117,7 @@ public class Receiver {
     private List<Byte> decodeBits(List<Short> frames) {
         // Recover clock index
         int i = recoverClockIndex(frames);
-        if(i == -1) { return new ArrayList<>();}
+        if(i == -1) { return new ArrayList<>(); }
         ArrayList<Byte> rec_bits = new ArrayList<>();
 
         // Skip past training sequence
@@ -113,6 +126,7 @@ public class Receiver {
             List<Short> bit_frames = frames.subList(i, i + BIT_FRAMES);
             if(scanTraining(training_bits, decodeBit(bit_frames))) {
                 i += BIT_FRAMES;
+                log.debug("Training sequence terminated on frame " + i + ".");
                 break; // training sequence terminated
             }
         }
@@ -126,6 +140,7 @@ public class Receiver {
             rec_bits.add(decodeBit(bit_frames));
         }
 
+        log.debug("Decoded " + rec_bits.size() + " bits. (Including ECC)");
         return rec_bits;
     }
 
@@ -148,7 +163,7 @@ public class Receiver {
      */
     private int recoverClockIndex(List<Short> frames) {
         if(frames.size() < CLOCK_SCAN_WIDTH) {
-            System.err.println("(jfskmodem) Receiver: Could not recover clock.");
+            log.warn("Could not recover clock from received signal. (Not enough information)");
             return -1;
         }
         ArrayList<Integer> scan_diffs = new ArrayList<>();
@@ -163,6 +178,7 @@ public class Receiver {
                 min_diff = scan_diffs.get(i);
             }
         }
+        log.debug("Recovered clock from signal. (Best match on frame " + min_index + ")");
         return min_index;
     }
 

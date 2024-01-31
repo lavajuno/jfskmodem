@@ -1,5 +1,7 @@
 package org.lavajuno.jfskmodem.io;
 
+import org.lavajuno.jfskmodem.log.Log;
+
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -11,17 +13,22 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class SoundInput {
     private static final int INPUT_BLOCK_SIZE = 4096;
-    private final TargetDataLine LINE;
+
+    private final TargetDataLine line;
+    private final Log log;
 
     /**
      * Constructs a SoundInput that listens on the default input device.
      * @throws LineUnavailableException If the input line could not be created
      */
     public SoundInput() throws LineUnavailableException {
+        log = new Log("SoundInput", Log.Level.DEBUG);
+        log.debug("Opening line to default audio input device...");
         AudioFormat format = new AudioFormat(48000, 16, 1, true, true);
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-        LINE = (TargetDataLine) AudioSystem.getLine(info);
-        LINE.open(format);
+        line = (TargetDataLine) AudioSystem.getLine(info);
+        line.open(format);
+        log.debug("Done setting up audio input.");
     }
 
     /**
@@ -30,7 +37,7 @@ public class SoundInput {
      */
     public List<Short> listen() {
         byte[] buffer = new byte[INPUT_BLOCK_SIZE];
-        LINE.read(buffer, 0, buffer.length);
+        line.read(buffer, 0, buffer.length);
         return bytesToFrames(buffer);
     }
 
@@ -38,29 +45,32 @@ public class SoundInput {
      * Temporarily stops the line and flushes the input buffer.
      */
     public void stop() {
-        LINE.stop();
-        LINE.flush();
+        log.debug("Stopping audio input line.");
+        line.stop();
+        line.flush();
     }
 
     /**
      * Starts the line and flushes the input buffer.
      */
     public void start() {
-        LINE.flush();
-        LINE.start();
+        log.debug("Starting audio input line.");
+        line.flush();
+        line.start();
     }
 
     /**
      * Flushes the input buffer.
      */
-    public void flush() { LINE.flush(); }
+    public void flush() { line.flush(); }
 
     /**
      * Stops and closes the line.
      */
     public void close() {
-        LINE.stop();
-        LINE.close();
+        log.debug("Closing audio input line.");
+        line.stop();
+        line.close();
     }
 
     /**
