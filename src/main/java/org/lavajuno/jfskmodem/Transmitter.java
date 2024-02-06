@@ -13,7 +13,10 @@ import java.util.List;
  * Transmitter manages a line to the default audio output device
  * and allows you to send data over it.
  */
+@SuppressWarnings("unused")
 public class Transmitter {
+    private static final double TRAINING_TIME = 0.5;
+
     private final int N_TS_CYCLES;
     private final List<Short> TONE_SPACE;
     private final List<Short> TONE_MARK;
@@ -23,13 +26,13 @@ public class Transmitter {
     private final Log log;
 
     /**
-     * Constructs a Transmitter with the given baud rate.
+     * Constructs a Transmitter with the given baud rate and log level.
      * @param baud_rate Baud rate for this Transmitter
      * @param log_level Log level for this Transmitter
      * @throws LineUnavailableException If the audio output line could not be created
      */
     public Transmitter(int baud_rate, Log.Level log_level) throws LineUnavailableException {
-        N_TS_CYCLES = (int) (baud_rate * JfskModemDemo.TRAINING_TIME / 2);
+        N_TS_CYCLES = (int) (baud_rate * TRAINING_TIME / 2);
         TONE_SPACE = Waveforms.getSpaceTone(baud_rate);
         TONE_MARK = Waveforms.getMarkTone(baud_rate);
         TS_CYCLE = Waveforms.getTrainingCycle(baud_rate);
@@ -37,12 +40,17 @@ public class Transmitter {
         log = new Log("Transmitter", log_level);
     }
 
+    /**
+     * Constructs a Transmitter with the given baud rate.
+     * @param baud_rate Baud rate for this Transmitter
+     * @throws LineUnavailableException If the audio output line could not be created
+     */
     public Transmitter(int baud_rate) throws LineUnavailableException {
         this(baud_rate, Log.Level.WARN);
     }
 
     /**
-     * Encodes and transmits the given bytes.
+     * Encodes and transmits the given bytes on this Transmitter's audio output.
      * @param data Bytes to transmit
      */
     public void transmit(byte[] data) {

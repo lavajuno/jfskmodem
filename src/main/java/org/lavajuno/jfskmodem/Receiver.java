@@ -27,6 +27,14 @@ public class Receiver {
     private final SoundInput sound_in;
     private final Log log;
 
+    /**
+     * Constructs a Receiver with the given baud rate, sensitivity parameters, and log level.
+     * @param baud_rate Baud rate for this Receiver
+     * @param signal_start_threshold Amplitude threshold to recognize the start of a signal
+     * @param signal_end_threshold Amplitude threshold to recognize the end of a signal
+     * @param log_level Log level for this Receiver.
+     * @throws LineUnavailableException If the audio input line could not be created
+     */
     public Receiver(int baud_rate, int signal_start_threshold, int signal_end_threshold, Log.Level log_level)
             throws LineUnavailableException {
         BIT_FRAMES = 48000 / baud_rate;
@@ -39,19 +47,42 @@ public class Receiver {
         log = new Log("Receiver", log_level);
     }
 
+    /**
+     * Constructs a Receiver with the given baud rate and sensitivity parameters.
+     * @param baud_rate Baud rate for this Receiver
+     * @param signal_start_threshold Amplitude threshold to recognize the start of a signal
+     * @param signal_end_threshold Amplitude threshold to recognize the end of a signal
+     * @throws LineUnavailableException If the audio input line could not be created
+     */
     public Receiver(int baud_rate, int signal_start_threshold, int signal_end_threshold)
             throws LineUnavailableException {
         this(baud_rate, signal_start_threshold, signal_end_threshold, Log.Level.WARN);
     }
 
+    /**
+     * Constructs a Receiver with the given baud rate and log level.
+     * @param baud_rate Baud rate for this Receiver
+     * @param log_level Log level for this Receiver
+     * @throws LineUnavailableException If the audio input line could not be created
+     */
     public Receiver(int baud_rate, Log.Level log_level) throws LineUnavailableException {
         this(baud_rate, 18000, 14000, log_level);
     }
 
+    /**
+     * Constructs a Receiver with the given baud rate.
+     * @param baud_rate Baud rate for this Receiver
+     * @throws LineUnavailableException If the audio input line could not be created
+     */
     public Receiver(int baud_rate) throws LineUnavailableException {
         this(baud_rate, Log.Level.WARN);
     }
 
+    /**
+     * Receives and decodes bytes from this Receiver's audio input.
+     * @param timeout Listen timeout in seconds
+     * @return Received bytes. Empty if signal cannot be decoded or timeout is reached.
+     */
     public byte[] receive(int timeout) {
         log.info("Listening...");
         List<Short> rec_frames = record(timeout * 48000);

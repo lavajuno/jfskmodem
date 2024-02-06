@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * SoundOutput provides functionality for writing frames to the default audio output device.
  */
-@SuppressWarnings("unused")
 public class SoundOutput {
     private final SourceDataLine line;
     private final Log log;

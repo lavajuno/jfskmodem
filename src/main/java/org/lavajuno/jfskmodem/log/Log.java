@@ -8,6 +8,7 @@ import java.util.Date;
  * Log events can have one of five severity levels:
  * DEBUG, INFO, WARN, ERROR and FATAL.
  */
+@SuppressWarnings("unused")
 public class Log {
     private static final SimpleDateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String LOG_PREFIX = " (jfskmodem)";

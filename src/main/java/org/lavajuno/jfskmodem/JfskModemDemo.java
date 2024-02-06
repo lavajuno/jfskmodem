@@ -7,19 +7,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class JfskModemDemo {
-    public static final double TRAINING_TIME = 0.5;
-
     private enum Mode {Tx, Rx, None}
-
-    private static Mode mode;
-    private static int baud_rate;
-    private static Log.Level log_level;
 
     public static void main(String[] args) {
         // Handle args
-        mode = Mode.None;
-        baud_rate = 1200;
-        log_level = Log.Level.WARN;
+        Mode mode = Mode.None;
+        int baud_rate = 1200;
+        Log.Level log_level = Log.Level.WARN;
         for(int i = 0; i < args.length; i++) {
             switch(args[i]) {
                 case "-t":
@@ -66,6 +60,7 @@ public class JfskModemDemo {
             }
         }
 
+        // Run
         switch(mode) {
             case Tx -> doTransmitter(baud_rate, log_level);
             case Rx -> doReceiver(baud_rate, log_level);
@@ -73,6 +68,11 @@ public class JfskModemDemo {
         }
     }
 
+    /**
+     * Runs the transmitter demo
+     * @param baud_rate Baud rate for the transmitter
+     * @param log_level Log level for the transmitter
+     */
     private static void doTransmitter(int baud_rate, Log.Level log_level) {
         try {
             Scanner in = new Scanner(System.in);
@@ -83,11 +83,15 @@ public class JfskModemDemo {
                 tx.transmit(line.getBytes(StandardCharsets.UTF_8));
             }
         } catch(LineUnavailableException e) {
-
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Runs the receiver demo
+     * @param baud_rate Baud rate for the receiver
+     * @param log_level Log level for the receiver
+     */
     private static void doReceiver(int baud_rate, Log.Level log_level) {
         try {
             Receiver r = new Receiver(baud_rate, log_level);

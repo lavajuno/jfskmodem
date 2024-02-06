@@ -6,7 +6,6 @@ import java.util.Arrays;
  * Hamming provides functionality for encoding
  * and decoding data with Hamming(4,3).
  */
-@SuppressWarnings("unused")
 public class Hamming {
     /**
      * Generator matrix to encode data
