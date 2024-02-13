@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * SoundInput provides functionality for reading frames from the default audio input device.
  */
 public class SoundInput {
-    private static final int INPUT_BLOCK_SIZE = 4096;
+    private static final int INPUT_BLOCK_SIZE = 2048;
 
     private final TargetDataLine line;
     private final Log log;
