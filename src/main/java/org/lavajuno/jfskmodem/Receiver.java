@@ -91,6 +91,11 @@ public class Receiver {
     }
 
     /**
+     * Closes this Receiver's audio input line.
+     */
+    public void close() { sound_in.close(); }
+
+    /**
      * Records a signal and returns it as a list of frames
      * @param timeout_frames Recording timeout in frames
      * @return Recorded signal as a list of frames
@@ -129,8 +134,8 @@ public class Receiver {
      * @return Decoded bytes
      */
     private byte[] decodeBytes(List<Byte> rec_bits) {
-        if(rec_bits.size() % 14 != 0 || rec_bits.isEmpty()) {
-            log.error("Could not decode (Not enough bits)");
+        if(rec_bits.isEmpty()) {
+            log.error("No data.");
             return new byte[]{};
         }
         int n_bytes = rec_bits.size() / 14;
@@ -144,7 +149,9 @@ public class Receiver {
                 current_byte[i % 14] = rec_bits.get(i);
             }
         }
-        rec_bytes[n_bytes - 1] = Hamming.decodeByte(current_byte);
+        if(rec_bits.size() % 14 == 0) {
+            rec_bytes[n_bytes - 1] = Hamming.decodeByte(current_byte);
+        }
         log.debug("Decoded " + rec_bytes.length + " bytes.");
         return rec_bytes;
     }

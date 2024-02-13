@@ -77,4 +77,9 @@ public class Transmitter {
         // Play frames
         sound_out.play(frames);
     }
+
+    /**
+     * Closes this Transmitter's audio output line.
+     */
+    public void close() { sound_out.close(); }
 }
