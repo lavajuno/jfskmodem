@@ -11,10 +11,10 @@ public class Waveforms {
      * Generates a single space tone for the given baud rate.
      * @param baud_rate Baud rate to use for generation
      * @return Space tone frames as a list of shorts
-     * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
+     * @throws IllegalArgumentException If the baud rate is not a factor of 48000
      */
     public static List<Short> getSpaceTone(int baud_rate) throws IllegalArgumentException {
-        if(48000 % baud_rate != 0 || baud_rate % 4 != 0) {
+        if(48000 % baud_rate != 0) {
             throw new IllegalArgumentException("Invalid baud rate.");
         }
         int bit_frames = 48000 / baud_rate;
@@ -32,10 +32,10 @@ public class Waveforms {
      * Generates a single mark tone for the given baud rate.
      * @param baud_rate Baud rate to use for generation
      * @return Mark tone frames as a list of shorts
-     * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
+     * @throws IllegalArgumentException If the baud rate is not a factor of 48000
      */
     public static List<Short> getMarkTone(int baud_rate) throws IllegalArgumentException {
-        if(48000 % baud_rate != 0 || baud_rate % 4 != 0) {
+        if(48000 % baud_rate != 0) {
             throw new IllegalArgumentException("Invalid baud rate.");
         }
         List<Short> res = getSpaceTone(baud_rate * 2);
@@ -47,7 +47,7 @@ public class Waveforms {
      * Generates a single training cycle for the given baud rate.
      * @param baud_rate Baud rate to use for generation
      * @return Training cycle frames as a list of shorts
-     * @throws IllegalArgumentException If the baud rate is not a factor of 48000 or not divisible by 4
+     * @throws IllegalArgumentException If the baud rate is not a factor of 48000
      */
     public static List<Short> getTrainingCycle(int baud_rate) throws IllegalArgumentException {
         ArrayList<Short> res = new ArrayList<>(getMarkTone(baud_rate));
